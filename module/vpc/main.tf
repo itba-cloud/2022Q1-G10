@@ -53,3 +53,4 @@ resource "aws_subnet" "private" {
   vpc_id =  aws_vpc.this.id
   cidr_block = "${each.value.subnet}"          # CIDR block of public subnets
 }
+

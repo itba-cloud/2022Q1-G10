@@ -73,7 +73,6 @@ module "lambda" {
 
   functions = {for k, v in local.lambda_function.functions: k => merge(v, { 
     iam_role = module.iam.arn
-    # execution_arn = module.api_gw.arn 
     subnet_ids = module.vpc.private_subnet_ids
     security_group_ids = []
   })}
@@ -113,9 +112,42 @@ module "cloudfront" {
   api_gw_url = module.api_gw.url
 }
 
+resource "random_password" "master"{
+  length           = 16
+  special          = true
+  override_special = "_!%^"
+}
 
+resource "aws_secretsmanager_secret" "password" {
+  name = local.aurora.password_secret_manager
+}
 
-# module "aurora" {
-#   source = "./module/aurora"
+resource "aws_secretsmanager_secret_version" "password" {
+  secret_id = aws_secretsmanager_secret.password.id
+  secret_string = random_password.master.result
+}
+
+module "aurora" {
+  source = "./module/aurora"
   
-# }
+  providers = {
+    aws = aws.aws
+  }
+
+  cluster_identifier = local.aurora.cluster_identifier
+  master_username = local.aurora.master_username
+  password_secret_manager = local.aurora.password_secret_manager
+  database_name = local.aurora.database_name
+  engine = local.aurora.engine
+  engine_mode = local.aurora.engine_mode
+  engine_version = local.aurora.engine_version
+  availability_zones = local.aurora.availability_zones
+  storage_encrypted = local.aurora.storage_encrypted
+  subnet_group_name = local.aurora.subnet_group_name
+
+  subnet_ids = module.vpc.private_subnet_ids
+
+  depends_on = [
+    aws_secretsmanager_secret.password
+  ]
+}

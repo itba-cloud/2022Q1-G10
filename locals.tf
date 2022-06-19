@@ -90,10 +90,21 @@ locals {
     }
   }
 
+  aurora = {
+    cluster_identifier = "itba-cloud-computing"
+    engine = "aurora-postgresql"
+    engine_mode = "provisioned"
+    engine_version = "13.6"
+    database_name = "cloudcomputing"
+    master_username = "postgres"
+    password_secret_manager = "aurora-master-password-secret"
+    availability_zones = ["us-east-1a", "us-east-1b"]
+    storage_encrypted = true
+    subnet_group_name = "itba-cloud-computing-db-subnet-group"
+  }
+
   vpc = {
     vpc_cidr = "10.0.0.0/16"
-    # private_subnet_cidrs = ["10.0.0.0/24", "10.0.1.0/24"]
-    # availability_zones   = ["us-east-1a", "us-east-1b"]
     availability_zones = [{
       az                   = "us-east-1a"
       private_subnet_cidrs = ["10.0.0.0/24", "10.0.1.0/24"]
