@@ -15,7 +15,6 @@ resource "aws_rds_cluster" "this" {
   availability_zones = var.availability_zones
   storage_encrypted  = var.storage_encrypted
   final_snapshot_identifier = var.final_snapshot_identifier
-  # skip_final_snapshot = true
   db_subnet_group_name = aws_db_subnet_group.this.name
 
   serverlessv2_scaling_configuration {
@@ -29,10 +28,10 @@ resource "aws_rds_cluster" "this" {
 }
 
 resource "aws_rds_cluster_instance" "this" {
-  instance_class     = "db.serverless"
-  cluster_identifier = aws_rds_cluster.this.id
-  engine             = aws_rds_cluster.this.engine
-  engine_version     = aws_rds_cluster.this.engine_version
+  instance_class       = "db.serverless"
+  cluster_identifier   = aws_rds_cluster.this.id
+  engine               = aws_rds_cluster.this.engine
+  engine_version       = aws_rds_cluster.this.engine_version
   db_subnet_group_name = aws_rds_cluster.this.db_subnet_group_name
 
 }

@@ -1,15 +1,19 @@
-//TODO change default values
 variable "bucket_name" {
-    type = string
-    default = "www-bucket"
+  type = string
+  description = "cloudfront frontend bucket name"
 }
 
 variable "logging_bucket_name" {
-    type = string
-    default = "logging-bucket"
+  type = string
+  description = "cloudfront logging bucket name"
 }
 
 variable "api_gw_url" {
+  type = string
+  description = "api gateway url"
+}
+
+variable "origin_id" {
     type = string
-    default = "api-gw-url"
+    description = "cloudfront origin id"
 }

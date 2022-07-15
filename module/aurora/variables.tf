@@ -1,52 +1,48 @@
 variable "cluster_identifier" {
     type = string
     description = "The name of the cluster"
-    default = "my-cluster"
 }
 
 variable "engine" {
     type = string
-    default = "aurora-postgresql"
+    description = "aurora engine"
 }
 
 variable "engine_mode" {
     type = string
-    default = "provisioned"
+    description = "aurora engine mode"
 }
 
 variable "engine_version" {
     type = string
-    default = "13.6"
+    description = "aurora engine version"
 }
 
 variable "database_name" {
     type = string
-    default = "my-db"
+    description = "aurora database name"
 }
 
 variable "master_username" {
     type = string
-    default = "postgres"
+    description = "aurora engine master username"
 }
-
-# variable "master_password" {
-#     type = string
-#     default = "root"
-# }
 
 variable "min_capacity" {
     type = number
-    default = 0.5
+    description = "aurora min capacity"
+
 }
 
 variable "max_capacity" {
     type = number
-    default = 5
+    description = "aurora max capacity"
 }
 
 variable "storage_encrypted" {
     type = bool
     default = true
+    description = "aurora storage encryption mode"
 }
 
 variable "availability_zones" {
@@ -56,26 +52,28 @@ variable "availability_zones" {
         "us-east-1b",
         "us-east-1c"
     ]
+    description = "aurora availability zones"
 }
 
 variable "subnet_group_name" {
     type = string
-    default = "my-subnet-group"
+    description = "aurora subnet group name"
 }
 
 variable "subnet_ids" {
     type = list(string)
     default = []
+    description = "aurora list of subnet ids"
 }
 
 variable "password_secret_manager" {
     type = string
-    default = "my-password-secret-manager"
+    description = "aurora password secret manager"
 }
 
 variable "final_snapshot_identifier" {
     type = string
-    default = "my-final-snapshot"
+    description = "aurora final snapshot identifier"
 }
 
 

@@ -1,43 +1,16 @@
 resource "aws_iam_role" "this" {
-  name               = "lambda_iam_role"
-  assume_role_policy = <<EOF
-  {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-  }
-  EOF
+  name               = var.role_name
+  assume_role_policy = data.aws_iam_policy_document.role_policy.json
 }
 
 resource "aws_iam_policy" "this" {
-  name        = "dev-policy"
-  description = "dev policy"
+  name        = var.policy_name
+  description = var.policy_description
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "lambda:Describe*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = data.aws_iam_policy_document.iam_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "test-attach" {
+resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
 }

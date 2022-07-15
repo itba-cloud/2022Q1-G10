@@ -1,11 +1,7 @@
 resource "aws_cloudfront_distribution" "this" {
   origin {
     domain_name = var.bucket_name
-    origin_id   = "frontend"
-
-    s3_origin_config {
-      origin_access_identity = "origin-access-identity/cloudfront/ABCDEFG1234567" ## TODO: De donde sale ?
-    }
+    origin_id   = var.origin_id
   }
 
   enabled             = true
@@ -16,8 +12,6 @@ resource "aws_cloudfront_distribution" "this" {
     include_cookies = false
     bucket          = var.logging_bucket_name
   }
-
-  #   aliases = ["mysite.example.com", "yoursite.example.com"]
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]

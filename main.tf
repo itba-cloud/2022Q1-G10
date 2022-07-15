@@ -1,3 +1,74 @@
+
+
+module "vpc" {
+  source = "./module/vpc"
+
+  providers = {
+    aws = aws.aws
+  }
+
+  vpc_cidr = "10.0.0.0/16"
+  availability_zones = [{
+    az                   = "us-east-1a"
+    private_subnet_cidrs = ["10.0.0.0/24", "10.0.1.0/24"]
+    public_subnet_cidrs  = []
+    }, {
+    az                   = "us-east-1b"
+    private_subnet_cidrs = ["10.0.2.0/24", "10.0.3.0/24"]
+    public_subnet_cidrs  = []
+  }]
+}
+
+module "iam" {
+  source = "./module/iam"
+
+  providers = {
+    aws = aws.aws
+  }
+
+  role_name          = "iam_role"
+  policy_name        = "iam_policy"
+  policy_description = "iam_policy_description"
+}
+
+module "lambda" {
+  source = "./module/lambda"
+
+  providers = {
+    aws = aws.aws
+  }
+
+  for_each = local.lambda_functions.functions
+
+  iam_role           = module.iam.arn
+  subnet_ids         = module.vpc.private_subnet_ids
+  security_group_ids = []
+  name               = each.value.name
+  zip                = each.value.zip
+  handler            = each.value.handler
+  runtime            = each.value.runtime
+}
+
+
+module "api_gw" {
+  source = "./module/api_gw"
+
+  providers = {
+    aws = aws.aws
+  }
+
+  name      = local.api_gw.name
+  endpoints = toset([for e in local.api_gw.endpoints : e.path])
+  methods = {
+    for e in local.api_gw.endpoints : "${e.method} ${e.path}" => merge(e, {
+      lambda = {
+        name = module.lambda[e.lambda_name].name
+        arn  = module.lambda[e.lambda_name].arn
+      }
+    })
+  }
+}
+
 module "s3" {
   for_each = local.s3
   source   = "./module/s3"
@@ -9,18 +80,8 @@ module "s3" {
   bucket_name = each.value.bucket_name
   objects     = try(each.value.objects, {})
   policy      = each.value.policy
+  lambda_arns = [for e in module.lambda : e.arn]
 }
-
-# resource "aws_s3_object" "this" {
-#   provider = aws.aws
-
-#   bucket        = module.s3["website"].id
-#   key           = "index.html"
-#   content       = data.template_file.userdata.rendered
-#   content_type  = "text/html"
-#   storage_class = "STANDARD"
-# }
-
 
 # Define reports bucket lifecycle transitions
 resource "aws_s3_bucket_lifecycle_configuration" "this" {
@@ -45,61 +106,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
 }
 
 
-module "vpc" {
-  source = "./module/vpc"
-
-  providers = {
-    aws = aws.aws
-  }
-
-  vpc_cidr = local.vpc.vpc_cidr
-  availability_zones   = local.vpc.availability_zones
-}
-
-module "iam" {
-  source = "./module/iam"
-
-  providers = {
-    aws = aws.aws
-  }
-}
-
-module "lambda" {
-  source = "./module/lambda"
-
-  providers = {
-    aws = aws.aws
-  }
-
-  functions = {for k, v in local.lambda_function.functions: k => merge(v, { 
-    iam_role = module.iam.arn
-    subnet_ids = module.vpc.private_subnet_ids
-    security_group_ids = []
-  })}
-}
-
-
-module "api_gw" {
-  source = "./module/api_gw"
-
-  providers = {
-    aws = aws.aws
-  }
-
-  name      = local.api_gw.name
-  endpoints = toset([for e in local.api_gw.endpoints: e.path])
-  methods = {
-    for e in local.api_gw.endpoints : "${e.method} ${e.path}" => merge(e, {
-      lambda = {
-        name = module.lambda.functions[e.lambda_name].name
-        arn = module.lambda.functions[e.lambda_name].arn
-      }
-    })
-  }
-}
-
-
-
 module "cloudfront" {
   source = "./module/cloudfront"
 
@@ -107,43 +113,47 @@ module "cloudfront" {
     aws = aws.aws
   }
 
-  bucket_name = local.cloud_front.bucket_name
+  bucket_name         = local.cloud_front.bucket_name
   logging_bucket_name = local.cloud_front.logging_bucket_name
-  api_gw_url = module.api_gw.url
+  api_gw_url          = module.api_gw.url
+  origin_id           = local.cloud_front.origin_id
 }
 
-resource "random_password" "master"{
+resource "random_password" "master" {
   length           = 16
   special          = true
   override_special = "_!%^"
 }
 
 resource "aws_secretsmanager_secret" "password" {
-  name = local.aurora.password_secret_manager
+  name = local.password_secret_manager
 }
 
 resource "aws_secretsmanager_secret_version" "password" {
-  secret_id = aws_secretsmanager_secret.password.id
+  secret_id     = aws_secretsmanager_secret.password.id
   secret_string = random_password.master.result
 }
 
 module "aurora" {
   source = "./module/aurora"
-  
+
   providers = {
     aws = aws.aws
   }
 
-  cluster_identifier = local.aurora.cluster_identifier
-  master_username = local.aurora.master_username
-  password_secret_manager = local.aurora.password_secret_manager
-  database_name = local.aurora.database_name
-  engine = local.aurora.engine
-  engine_mode = local.aurora.engine_mode
-  engine_version = local.aurora.engine_version
-  availability_zones = local.aurora.availability_zones
-  storage_encrypted = local.aurora.storage_encrypted
-  subnet_group_name = local.aurora.subnet_group_name
+  cluster_identifier        = "itba-cloud-computing"
+  engine                    = "aurora-postgresql"
+  engine_mode               = "provisioned"
+  engine_version            = "13.6"
+  database_name             = "cloudcomputing"
+  master_username           = "postgres"
+  password_secret_manager   = local.password_secret_manager
+  availability_zones        = ["us-east-1a", "us-east-1b"]
+  storage_encrypted         = true
+  subnet_group_name         = "itba-cloud-computing-db-subnet-group"
+  min_capacity              = 0.5
+  max_capacity              = 5
+  final_snapshot_identifier = "itba-cloud-computing-final-snapshot"
 
   subnet_ids = module.vpc.private_subnet_ids
 

@@ -2,14 +2,27 @@
 # Amazon S3 datasources
 # ---------------------------------------------------------------------------
 
-data "aws_iam_policy_document" "this" {
+data "aws_iam_policy_document" "public_read" {
     statement {
         sid = "PublicReadGetObject"
-        effect = var.policy.statement.effect
-        actions = var.policy.statement.actions
+        effect = "Allow"
+        actions = ["s3:GetObject"]
         principals {
-            type        = var.policy.statement.principal.type
-            identifiers = var.policy.statement.principal.identifiers
+            type = "AWS"
+            identifiers = ["*"]
+        }
+        resources = ["${aws_s3_bucket.this.arn}/*"]
+    }
+}
+
+data "aws_iam_policy_document" "lambda_only" {
+    statement {
+        sid = "LambdaOnly"
+        effect = "Allow"
+        actions = ["s3:GetObject"]
+        principals {
+            type = "AWS"
+            identifiers = var.lambda_arns
         }
         resources = ["${aws_s3_bucket.this.arn}/*"]
     }

@@ -7,15 +7,6 @@ resource "aws_vpc" "this" {
 }
 
 resource "aws_subnet" "public" {    # Creating Public Subnets
-  # for_each = {for entry in distinct(flatten([for az in var.availability_zones : [
-  #   for subnet in var.public_subnet_cidrs : {
-  #     availability_zone = az
-  #     subnet = subnet
-  #   }
-  # ]])): "${entry.availability_zone}-${entry.subnet}" => {
-  #   availability_zone = entry.availability_zone
-  #   subnet = entry.subnet
-  # }}
   for_each = {for entry in flatten([for entry in var.availability_zones: [for subnet in entry.public_subnet_cidrs: {
     availability_zone = entry.az
     subnet = subnet
@@ -31,15 +22,6 @@ resource "aws_subnet" "public" {    # Creating Public Subnets
 }
 
 resource "aws_subnet" "private" {
-  # for_each = {for entry in distinct(flatten([for az in var.availability_zones : [
-  #   for subnet in var.private_subnet_cidrs : {
-  #     availability_zone = az
-  #     subnet = subnet
-  #   }
-  # ]])): "${entry.availability_zone}-${entry.subnet}" => {
-  #   availability_zone = entry.availability_zone
-  #   subnet = entry.subnet
-  # }}
   for_each = {for entry in flatten([for entry in var.availability_zones: [for subnet in entry.private_subnet_cidrs: {
     availability_zone = entry.az
     subnet = subnet
