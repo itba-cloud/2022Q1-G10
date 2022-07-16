@@ -11,7 +11,8 @@ resource "aws_rds_cluster" "this" {
   engine_version     = var.engine_version
   database_name      = var.database_name
   master_username    = var.master_username
-  master_password    = data.aws_secretsmanager_secret_version.password.secret_string
+  # master_password    = data.aws_secretsmanager_secret_version.password.secret_string
+  master_password = "rootroot"
   availability_zones = var.availability_zones
   storage_encrypted  = var.storage_encrypted
   final_snapshot_identifier = var.final_snapshot_identifier

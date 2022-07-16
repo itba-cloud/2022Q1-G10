@@ -127,18 +127,18 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
 }
 
 
-module "cloudfront" {
-  source = "./module/cloudfront"
+# module "cloudfront" {
+#   source = "./module/cloudfront"
 
-  providers = {
-    aws = aws.aws
-  }
+#   providers = {
+#     aws = aws.aws
+#   }
 
-  bucket_name         = local.cloud_front.bucket_name
-  logging_bucket_name = local.cloud_front.logging_bucket_name
-  api_gw_url          = module.api_gw.url
-  origin_id           = local.cloud_front.origin_id
-}
+#   bucket_name         = local.cloud_front.bucket_name
+#   logging_bucket_name = local.cloud_front.logging_bucket_name
+#   api_gw_url          = module.api_gw.url
+#   origin_id           = local.cloud_front.origin_id
+# }
 
 resource "random_password" "master" {
   length           = 16
@@ -146,14 +146,14 @@ resource "random_password" "master" {
   override_special = "_!%^"
 }
 
-resource "aws_secretsmanager_secret" "password" {
-  name = local.password_secret_manager
-}
+# resource "aws_secretsmanager_secret" "password" {
+#   name = local.password_secret_manager
+# }
 
-resource "aws_secretsmanager_secret_version" "password" {
-  secret_id     = aws_secretsmanager_secret.password.id
-  secret_string = random_password.master.result
-}
+# resource "aws_secretsmanager_secret_version" "password" {
+#   secret_id     = aws_secretsmanager_secret.password.id
+#   secret_string = random_password.master.result
+# }
 
 module "aurora" {
   source = "./module/aurora"
@@ -178,7 +178,7 @@ module "aurora" {
 
   subnet_ids = module.vpc.private_subnet_ids
 
-  depends_on = [
-    aws_secretsmanager_secret.password
-  ]
+  # depends_on = [
+  #   aws_secretsmanager_secret.password
+  # ]
 }
