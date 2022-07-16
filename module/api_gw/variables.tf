@@ -14,3 +14,9 @@ variable "methods" {
   default = {}
   description = "values of methods"
 }
+
+variable "resources" {
+  type = map(any)
+  default = {}
+  description = "values of resources"
+}

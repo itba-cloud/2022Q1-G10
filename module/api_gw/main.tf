@@ -2,36 +2,49 @@ resource "aws_api_gateway_rest_api" "this" {
   name = var.name
 }
 
-resource "aws_api_gateway_resource" "this" {
-  for_each = var.endpoints
+# resource "aws_api_gateway_resource" "this" {
+#   for_each = var.endpoints
+
+#   parent_id   = aws_api_gateway_rest_api.this.root_resource_id
+#   rest_api_id = aws_api_gateway_rest_api.this.id
+#   path_part   = each.value
+# }
+
+resource "aws_api_gateway_resource" "parents" {
+  for_each = toset([ for resource in var.resources: resource.path if resource.parent == "" ])
 
   parent_id   = aws_api_gateway_rest_api.this.root_resource_id
   rest_api_id = aws_api_gateway_rest_api.this.id
   path_part   = each.value
 }
 
+resource "aws_api_gateway_resource" "children" {
+  for_each = { for resource in var.resources: "${resource.parent}/${resource.path}" => resource if resource.parent != "" }
+
+  parent_id   = aws_api_gateway_resource.parents[each.value.parent].id
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  path_part   = each.value.path
+}
 resource "aws_api_gateway_method" "this" {
   for_each = var.methods
 
   rest_api_id = aws_api_gateway_rest_api.this.id
-  resource_id = aws_api_gateway_resource.this[each.value.path].id
+  resource_id = lookup(aws_api_gateway_resource.parents, each.value.path, false) != false ? aws_api_gateway_resource.parents[each.value.path].id : aws_api_gateway_resource.children[each.value.full_path].id
 
   http_method   = each.value.method
-  authorization = "NONE" # TODO: Ver que onda
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "this" {
   for_each = var.methods
 
   rest_api_id             = aws_api_gateway_rest_api.this.id
-  resource_id             = aws_api_gateway_resource.this[each.value.path].id
+  resource_id = lookup(aws_api_gateway_resource.parents, each.value.path, false) != false ? aws_api_gateway_resource.parents[each.value.path].id : aws_api_gateway_resource.children[each.value.full_path].id
   http_method             = aws_api_gateway_method.this[each.key].http_method
   integration_http_method = aws_api_gateway_method.this[each.key].http_method
 
   type = "AWS_PROXY"
   uri  = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${each.value.lambda.arn}/invocations"
-  # uri = each.value.lambda 
-  # var.endpoints[keys(var.endpoints)[count.index]].value.lambda
 }
 
 
@@ -48,7 +61,8 @@ resource "aws_api_gateway_deployment" "this" {
       #       resources will show a difference after the initial implementation.
       #       It will stabilize to only change when resources change afterwards.
       # aws_api_gateway_rest_api.this.body,
-      aws_api_gateway_resource.this,
+      aws_api_gateway_resource.parents,
+      aws_api_gateway_resource.children,
       aws_api_gateway_method.this,
       aws_api_gateway_integration.this,
     ]))

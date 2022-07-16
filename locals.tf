@@ -1,11 +1,7 @@
 locals {
-  bucket_name = "b123123123123-itba-cloud-computing"
+  bucket_name = "b12121212-itba-cloud-computing"
+  iam_role_arn = "arn:aws:iam::688352576206:role/LabRole"
+  sg_id = "sg-071e684110679e8b3"
 
-  cloud_front = {
-    bucket_name         = local.s3.www-website.bucket_name
-    logging_bucket_name = local.s3.logs.bucket_name
-    origin_id           = "frontend"
-  }
-
-  password_secret_manager = "aurora-master-password-secret"
+  password_secret_manager = "aurora-password-secret"
 }

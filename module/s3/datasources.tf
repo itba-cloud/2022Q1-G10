@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "public_read" {
         effect = "Allow"
         actions = ["s3:GetObject"]
         principals {
-            type = "AWS"
+            type = "*"
             identifiers = ["*"]
         }
         resources = ["${aws_s3_bucket.this.arn}/*"]

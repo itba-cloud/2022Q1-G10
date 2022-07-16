@@ -1,6 +1,6 @@
 resource "aws_cloudfront_distribution" "this" {
   origin {
-    domain_name = var.bucket_name
+    domain_name = "${var.bucket_name}.s3.amazonaws.com"
     origin_id   = var.origin_id
   }
 
@@ -10,11 +10,11 @@ resource "aws_cloudfront_distribution" "this" {
 
   logging_config {
     include_cookies = false
-    bucket          = var.logging_bucket_name
+    bucket          = "${var.logging_bucket_name}.s3.amazonaws.com"
   }
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "frontend"
 
@@ -46,7 +46,7 @@ resource "aws_cloudfront_distribution" "this" {
 
   ordered_cache_behavior {
     path_pattern = "/api/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "apigw"
 

@@ -1,46 +1,74 @@
 locals {
   api_gw = {
     name = "my-api-gw"
+    resources = {
+      users = {
+        parent = ""
+        path = "users"
+      }
+
+      timesheets = {
+        parent = ""
+        path = "timesheets"
+      }
+
+      timesheet = {
+        parent = "timesheets"
+        path = "{id}"
+      }
+
+      reports = {
+        parent = ""
+        path = "reports"
+      }
+    }
     endpoints = {
       get_users = {
         method      = "GET"
+        full_path   = "users"
         path        = "users"
         lambda_name = "get_users"
       }
 
       put_user = {
         method      = "PUT"
+        full_path   = "users"
         path        = "users"
         lambda_name = "put_user"
       }
 
       create_user = {
         method      = "POST"
+        full_path   = "users"
         path        = "users"
         lambda_name = "create_user"
       }
 
       get_report = {
         method      = "GET"
-        path        = "report"
+        full_path   = "reports"
+        path        = "reports"
         lambda_name = "get_report"
       }
 
       get_timesheet = {
         method      = "GET"
-        path        = "timesheet"
+        full_path   = "timesheets/{id}"
+        path        = "{id}"
         lambda_name = "get_timesheet"
       }
 
       put_timesheet = {
         method      = "PUT"
-        path        = "timesheet"
+        full_path   = "timesheets/{id}"
+        path        = "{id}"
         lambda_name = "put_timesheet"
       }
 
       post_timesheet = {
         method      = "POST"
-        path        = "timesheet"
+        full_path   = "timesheets"
+        path        = "timesheets"
         lambda_name = "post_timesheet"
       }
     }

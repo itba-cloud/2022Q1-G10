@@ -11,7 +11,8 @@ resource "aws_s3_bucket_policy" "this" {
 }
 
 # 3 -Website configuration
-resource "aws_s3_bucket_website_configuration" "this" {
+resource "aws_s3_bucket_website_configuration" "web" {
+    count = var.is_website ? 1 : 0
     bucket = aws_s3_bucket.this.id
 
     index_document {
@@ -23,6 +24,13 @@ resource "aws_s3_bucket_website_configuration" "this" {
     }
 }
 
+resource "aws_s3_bucket_website_configuration" "redirect" {
+    count = var.is_redirect ? 1 : 0
+    bucket = aws_s3_bucket.this.id
+    redirect_all_requests_to {
+        host_name = var.redirect
+    }
+}
 # 4 - Access Control List
 resource "aws_s3_bucket_acl" "this" {
     bucket = aws_s3_bucket.this.id

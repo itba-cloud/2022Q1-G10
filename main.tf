@@ -19,17 +19,17 @@ module "vpc" {
   }]
 }
 
-module "iam" {
-  source = "./module/iam"
+# module "iam" {
+#   source = "./module/iam"
 
-  providers = {
-    aws = aws.aws
-  }
+#   providers = {
+#     aws = aws.aws
+#   }
 
-  role_name          = "iam_role"
-  policy_name        = "iam_policy"
-  policy_description = "iam_policy_description"
-}
+#   role_name          = "iam_role"
+#   policy_name        = "iam_policy"
+#   policy_description = "iam_policy_description"
+# }
 
 module "lambda" {
   source = "./module/lambda"
@@ -40,9 +40,9 @@ module "lambda" {
 
   for_each = local.lambda_functions.functions
 
-  iam_role           = module.iam.arn
+  iam_role           = local.iam_role_arn
   subnet_ids         = module.vpc.private_subnet_ids
-  security_group_ids = []
+  security_group_ids = [local.sg_id]
   name               = each.value.name
   zip                = each.value.zip
   handler            = each.value.handler
@@ -59,8 +59,9 @@ module "api_gw" {
 
   name      = local.api_gw.name
   endpoints = toset([for e in local.api_gw.endpoints : e.path])
+  resources = local.api_gw.resources
   methods = {
-    for e in local.api_gw.endpoints : "${e.method} ${e.path}" => merge(e, {
+    for e in local.api_gw.endpoints : "${e.method} ${e.full_path}" => merge(e, {
       lambda = {
         name = module.lambda[e.lambda_name].name
         arn  = module.lambda[e.lambda_name].arn
@@ -80,7 +81,27 @@ module "s3" {
   bucket_name = each.value.bucket_name
   objects     = try(each.value.objects, {})
   policy      = each.value.policy
-  lambda_arns = [for e in module.lambda : e.arn]
+  is_website = each.value.is_website
+  lambda_arns = [local.iam_role_arn]
+}
+
+module "s3_redirect" {
+  for_each = local.s3_redirect
+  source   = "./module/s3"
+
+  providers = {
+    aws = aws.aws
+  }
+
+  bucket_name = each.value.bucket_name
+  objects     = {}
+  policy      = each.value.policy
+  is_redirect = true
+  redirect    = module.s3[each.value.redirect].website_endpoint
+  lambda_arns = []
+  depends_on = [
+    module.s3
+  ]
 }
 
 # Define reports bucket lifecycle transitions

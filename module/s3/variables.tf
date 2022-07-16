@@ -34,3 +34,21 @@ variable "lambda_arns" {
   type        = list(string)
   description = "list of lambda arns to be granted access to the bucket"
 }
+
+variable "is_website" {
+  type        = bool
+  default     = false
+  description = "Determines if the bucket is configured for static website hosting"
+}
+
+variable "is_redirect" {
+  type        = bool
+  default     = false
+  description = "Determines if the bucket is configured for redirects"
+}
+
+variable "redirect" {
+  type        = string
+  default = ""
+  description = "The domain name to redirect to. If not specified, no redirect will be configured."
+}
