@@ -81,7 +81,7 @@ module "s3" {
   bucket_name = each.value.bucket_name
   objects     = try(each.value.objects, {})
   policy      = each.value.policy
-  is_website = each.value.is_website
+  is_website  = each.value.is_website
   lambda_arns = [local.iam_role_arn]
 }
 

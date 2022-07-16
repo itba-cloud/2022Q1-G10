@@ -4,22 +4,22 @@ locals {
     resources = {
       users = {
         parent = ""
-        path = "users"
+        path   = "users"
       }
 
       timesheets = {
         parent = ""
-        path = "timesheets"
+        path   = "timesheets"
       }
 
       timesheet = {
         parent = "timesheets"
-        path = "{id}"
+        path   = "{id}"
       }
 
       reports = {
         parent = ""
-        path = "reports"
+        path   = "reports"
       }
     }
     endpoints = {

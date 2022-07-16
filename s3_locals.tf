@@ -4,7 +4,7 @@ locals {
     website = {
       bucket_name = local.bucket_name
       path        = "./resources"
-      is_website = true
+      is_website  = true
 
       objects = {
         index = {
@@ -22,7 +22,7 @@ locals {
 
     # 3 - Website Logs
     logs = {
-      is_website = false
+      is_website  = false
       bucket_name = "${local.bucket_name}-logs"
 
       policy = "public_read"
@@ -30,7 +30,7 @@ locals {
 
     reports = {
       bucket_name = "${local.bucket_name}-reports"
-      is_website = false
+      is_website  = false
       tier        = "STANDARD"
       policy      = "lambda_only"
     }
@@ -38,8 +38,8 @@ locals {
 
   s3_redirect = {
     www-website = {
-      is_website = false
-      redirect = "website"
+      is_website  = false
+      redirect    = "website"
       bucket_name = "www.${local.bucket_name}"
       policy      = "public_read"
     }
