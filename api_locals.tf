@@ -68,6 +68,12 @@ locals {
         lambda_name = "get_timesheet"
       }
 
+      get_timesheet_by_userid = {
+        method      = "GET"
+        full_path   = "timesheets"
+        lambda_name = "get_timesheet_by_userid"
+      }
+
       put_timesheet = {
         method      = "PUT"
         full_path   = "timesheets/{id}"
@@ -156,6 +162,13 @@ locals {
         name    = "get-timesheet"
         zip     = "./resources/lambdas/get_timesheet.zip"
         handler = "get_timesheet.handler"
+        runtime = "nodejs16.x"
+      }
+
+      get_timesheet_by_userid = {
+        name    = "get-timesheet-by-userid"
+        zip     = "./resources/lambdas/get_timesheet_by_userid.zip"
+        handler = "get_timesheet_by_userid.handler"
         runtime = "nodejs16.x"
       }
       put_timesheet = {
