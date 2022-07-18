@@ -41,7 +41,7 @@ resource "aws_api_gateway_integration" "this" {
   rest_api_id             = aws_api_gateway_rest_api.this.id
   resource_id = lookup(aws_api_gateway_resource.parents, each.value.path, false) != false ? aws_api_gateway_resource.parents[each.value.path].id : aws_api_gateway_resource.children[each.value.full_path].id
   http_method             = aws_api_gateway_method.this[each.key].http_method
-  integration_http_method = aws_api_gateway_method.this[each.key].http_method
+  integration_http_method = "POST"
 
   type = "AWS_PROXY"
   uri  = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${each.value.lambda.arn}/invocations"
