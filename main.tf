@@ -57,6 +57,7 @@ module "api_gw" {
     aws = aws.aws
   }
 
+  iam_role  = local.iam_role_arn
   name      = local.api_gw.name
   endpoints = toset([for e in local.api_gw.endpoints : e.path])
   resources = local.api_gw.resources
@@ -169,7 +170,7 @@ module "aurora" {
   database_name             = "cloudcomputing"
   master_username           = "postgres"
   password_secret_manager   = local.password_secret_manager
-  availability_zones        = ["us-east-1a", "us-east-1b"]
+  availability_zones        = ["us-east-1a", "us-east-1b", "us-east-1c"]
   storage_encrypted         = true
   subnet_group_name         = "itba-cloud-computing-db-subnet-group"
   min_capacity              = 0.5

@@ -23,6 +23,10 @@ exports.handler = async (event) => {
 
 	const response = {
 		statusCode: 200,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET'
+		},
 		body: resultString
 	};
 

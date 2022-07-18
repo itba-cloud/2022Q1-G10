@@ -3,6 +3,11 @@ variable "name" {
   description="Api gateway name"
 }
 
+variable "iam_role" {
+  type=string
+  description="IAM role name"
+}
+
 variable "endpoints" {
   type = set(string)
   default = []

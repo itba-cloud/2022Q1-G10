@@ -18,6 +18,10 @@ exports.handler = async (event) => {
 	client.end();
 	const response = {
 		statusCode: 200,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'POST'
+		},
 		body: resultString
 	};
 	return response;
