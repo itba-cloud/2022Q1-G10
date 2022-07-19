@@ -241,6 +241,13 @@ locals {
         handler = "index.handler"
         runtime = "nodejs16.x"
       }
+
+      create_tables = {
+        name    = "create-tables"
+        zip     = "./resources/lambdas/create_tables/create_tables.zip"
+        handler = "index.handler"
+        runtime = "nodejs16.x"
+      }
     }
   }
 }

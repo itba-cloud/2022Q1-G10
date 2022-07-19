@@ -2,7 +2,7 @@ exports.handler = async (event) => {
 	const { Client } = require('pg');
 
 	const query = {
-		text: 'SELECT * FROM timesheets WHERE id = $1',
+		text: 'SELECT * FROM timesheets LEFT JOIN categories c on timesheets.category_id = c.id WHERE timesheets.id = $1',
 		values: [event.pathParameters.id]
 	};
 

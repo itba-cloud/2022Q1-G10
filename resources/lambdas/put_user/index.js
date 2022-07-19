@@ -1,7 +1,7 @@
 exports.handler = async (event) => {
 	const { Client } = require('pg');
 
-	const body = event.body;
+	const body = JSON.parse(event.body);
 	const id = event.pathParameters.id;
 
 	const query = {

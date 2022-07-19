@@ -2,7 +2,7 @@ exports.handler = async (event) => {
 	const { Client } = require('pg');
 
 	const query = {
-		text: 'SELECT * FROM timesheets'
+		text: 'SELECT *, timesheets.id FROM timesheets LEFT JOIN categories c on timesheets.category_id = c.id'
 	};
 
 	const client = new Client({

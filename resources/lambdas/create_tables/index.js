@@ -2,17 +2,18 @@ exports.handler = async (event) => {
 	const { Client } = require('pg');
 
 	const query = {
-		text: `CREATE TABLE categories (
+		text: `CREATE TABLE IF NOT EXISTS categories (
             id SERIAL PRIMARY KEY,
-            name TEXT
+            name TEXT NOT NULL
         );
         
-        CREATE TABLE timesheets (
+        CREATE TABLE IF NOT EXISTS timesheets (
             id SERIAL PRIMARY KEY,
-            user_id INT,
-            category_id INT,
-            _date timestamp,
-            hours INT,
+            user_id INT NOT NULL,
+			task TEXT NOT NULL,
+            category_id INT NOT NULL,
+            _date DATE NOT NULL,
+            hours FLOAT NOT NULL,
             FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
         );`
 	};

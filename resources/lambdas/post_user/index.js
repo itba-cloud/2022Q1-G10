@@ -1,6 +1,6 @@
 exports.handler = async (event) => {
 	const { Client } = require('pg');
-	const body = event.body;
+	const body = JSON.parse(event.body);
 	const query = {
 		text: 'INSERT INTO users (name, lastname, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
 		values: [body.name, body.lastname, body.email, body.password]

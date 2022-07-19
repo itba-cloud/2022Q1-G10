@@ -1,10 +1,11 @@
 //postCategory
 exports.handler = async (event) => {
 	const { Client } = require('pg');
+	const body = JSON.parse(event.body);
 
 	const query = {
 		text: 'insert into categories (name) values($1) RETURNING *',
-		values: [event.body.name]
+		values: [body.name]
 	};
 
 	const client = new Client({
