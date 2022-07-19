@@ -40,16 +40,6 @@ rm get_timesheets.zip
 zip -r get_timesheets.zip *
 cd ..
 
-cd get_timesheets_by_categoryid
-rm get_timesheets_by_categoryid.zip
-zip -r get_timesheets_by_categoryid.zip *
-cd ..
-
-cd get_timesheets_by_userid
-rm get_timesheets_by_userid.zip
-zip -r get_timesheets_by_userid.zip *
-cd ..
-
 cd get_users
 rm get_users.zip
 zip -r get_users.zip *
