@@ -9,7 +9,7 @@ exports.handler = async (event) => {
         
         CREATE TABLE IF NOT EXISTS timesheets (
             id SERIAL PRIMARY KEY,
-            user_id INT NOT NULL,
+            user_id TEXT NOT NULL,
 			task TEXT NOT NULL,
             category_id INT NOT NULL,
             _date DATE NOT NULL,
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
 	const result = await client.query(query);
 	const resultString = JSON.stringify(result);
 
-	client.end();
+	await client.end();
 
 	const response = {
 		statusCode: 200,

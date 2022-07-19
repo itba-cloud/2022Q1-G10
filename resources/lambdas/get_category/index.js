@@ -20,7 +20,7 @@ exports.handler = async (event) => {
 	const result = await client.query(query);
 	const resultString = JSON.stringify(result);
 
-	client.end();
+	await client.end();
 
 	const response = {
 		statusCode: 200,

@@ -21,7 +21,7 @@ exports.handler = async (event) => {
 	const result = await client.query(query);
 	const resultString = JSON.stringify(result.rows[0]);
 
-	client.end();
+	await client.end();
 
 	const response = {
 		statusCode: 201,
