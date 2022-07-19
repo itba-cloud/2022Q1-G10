@@ -4,7 +4,7 @@ exports.handler = async (event) => {
 	const body = JSON.parse(event.body);
 	const query = {
 		text: 'insert into timesheets (user_id, user_name, user_lastname, task, _date, hours, category_id) values($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-		values: [body.user_id, body.name, body.lastname, body.task, body.date, body.hours, body.category_id]
+		values: [body.user_id, body.user_name, body.user_lastname, body.task, body.date, body.hours, body.category_id]
 	};
 
 	const client = new Client({
