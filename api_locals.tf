@@ -65,19 +65,6 @@ locals {
         path        = "{id}"
         lambda_name = "get_timesheet"
       }
-      # get_timesheets_by_userid = {
-      #   method      = "GET"
-      #   full_path   = "timesheets?user_id={user_id}"
-      #   path        = "{user_id}"
-      #   lambda_name = "get_timesheets_by_userid"
-      # }
-      # get_timesheets_by_categoryid = {
-      #   method      = "GET"
-      #   full_path   = "timesheets?category_id={category_id}"
-      #   path        = "{category_id}"
-      #   lambda_name = "get_timesheets_by_categoryid"
-      # }
-
       get_timesheets = {
         method      = "GET"
         full_path   = "timesheets"

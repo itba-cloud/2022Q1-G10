@@ -1,9 +1,22 @@
 exports.handler = async (event) => {
 	const { Client } = require('pg');
 
+	const queryParams = event.queryStringParameters;
+
 	const query = {
-		text: 'SELECT *, timesheets.id FROM timesheets LEFT JOIN categories c on timesheets.category_id = c.id'
+		text: 'SELECT *, timesheets.id FROM timesheets LEFT JOIN categories c on timesheets.category_id = c.id WHERE TRUE'
 	};
+
+	if (queryParams.category_id) {
+		query.text += ` AND timesheets.category_id = ${queryParams.category_id}`;
+	}
+	if (queryParams.user_id) {
+		query.text += ` AND timesheets.user_id = ${queryParams.user_id}`;
+	}
+
+	if (queryParams.order_by) {
+		query.text += ` ORDER BY ${queryParams.order_by}`;
+	}
 
 	const client = new Client({
 		user: 'postgres',
