@@ -9,7 +9,9 @@ exports.handler = async (event) => {
         
         CREATE TABLE IF NOT EXISTS timesheets (
             id SERIAL PRIMARY KEY,
-            user_id TEXT NOT NULL,
+			user_id TEXT NOT NULL,
+            user_name TEXT NOT NULL,
+			user_lastname TEXT NOT NULL,
 			task TEXT NOT NULL,
             category_id INT NOT NULL,
             _date DATE NOT NULL,
