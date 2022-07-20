@@ -2,14 +2,6 @@ resource "aws_api_gateway_rest_api" "this" {
   name = var.name
 }
 
-# resource "aws_api_gateway_resource" "this" {
-#   for_each = var.endpoints
-
-#   parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-#   rest_api_id = aws_api_gateway_rest_api.this.id
-#   path_part   = each.value
-# }
-
 resource "aws_api_gateway_resource" "parents" {
   for_each = toset([ for resource in var.resources: resource.path if resource.parent == "" ])
 

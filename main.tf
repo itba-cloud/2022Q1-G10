@@ -19,6 +19,9 @@ module "vpc" {
   }]
 }
 
+
+# Couldn´t create roles. We used LabRole
+
 # module "iam" {
 #   source = "./module/iam"
 
@@ -127,6 +130,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
   }
 }
 
+# Problems with lab permissions
 
 # module "cloudfront" {
 #   source = "./module/cloudfront"
@@ -146,6 +150,8 @@ resource "random_password" "master" {
   special          = true
   override_special = "_!%^"
 }
+
+// Problems with lab permissions
 
 # resource "aws_secretsmanager_secret" "password" {
 #   name = local.password_secret_manager

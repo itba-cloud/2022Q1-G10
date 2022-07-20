@@ -167,19 +167,6 @@ locals {
         handler = "index.handler"
         runtime = "nodejs16.x"
       }
-      # get_timesheets_by_categoryid = {
-      #   name    = "get-timesheets-by-categoryid"
-      #   zip     = "./resources/lambdas/get_timesheets_by_categoryid/get_timesheets_by_categoryid.zip"
-      #   handler = "get_timesheets_by_categoryid.handler"
-      #   runtime = "nodejs16.x"
-      # }
-
-      # get_timesheets_by_userid = {
-      #   name    = "get-timesheets-by-userid"
-      #   zip     = "./resources/lambdas/get_timesheets_by_userid/get_timesheets_by_userid.zip"
-      #   handler = "get_timesheets_by_userid.handler"
-      #   runtime = "nodejs16.x"
-      # }
       put_timesheet = {
         name    = "put-timesheet"
         zip     = "./resources/lambdas/put_timesheet/put_timesheet.zip"
