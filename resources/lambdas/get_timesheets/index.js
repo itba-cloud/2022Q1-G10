@@ -18,11 +18,9 @@ exports.handler = async (event) => {
 		if (queryParams.month) {
 			query.text += ` AND EXTRACT (month FROM timesheets._date) = ${queryParams.month}`;
 		}
-
-		if (queryParams.order_by) {
-			query.text += ` ORDER BY ${queryParams.order_by}`;
-		}
 	}
+
+	query.text += 'ORDER BY timesheets._date';
 
 	const client = new Client({
 		user: 'postgres',
